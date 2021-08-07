@@ -40,27 +40,26 @@ def get_current_price(ticker):
 
 # 로그인
 upbit = pyupbit.Upbit(access, secret)
-print("autotrade start")
 
 # 자동매매 시작
 while True:
     try:
         now = datetime.datetime.now()
-        start_time = get_start_time("KRW-ETH")
+        start_time = get_start_time("KRW-XRP")
         end_time = start_time + datetime.timedelta(days=1)
 
         if start_time < now < end_time - datetime.timedelta(seconds=10):
-            target_price = get_target_price("KRW-ETH", 0.001)
-            ma15 = get_ma15("KRW-ETH")
-            current_price = get_current_price("KRW-ETH")
+            target_price = get_target_price("KRW-XRP", 0.501) 
+            ma15 = get_ma15("KRW-XRP")
+            current_price = get_current_price("KRW-XRP")
             if target_price < current_price and ma15 < current_price:
                 krw = get_balance("KRW")
                 if krw > 5000:
-                    upbit.buy_market_order("KRW-ETH", krw*0.9995)
+                    upbit.buy_market_order("KRW-XRP", krw)
         else:
-            eth = get_balance("ETH")
-            if eth > 0.001:
-                upbit.sell_market_order("KRW-ETH", eth*0.9995)
+            btc = get_balance("XRP")
+            if btc > 4.3859: 
+                upbit.sell_market_order("KRW-XRP", btc)
         time.sleep(1)
     except Exception as e:
         print(e)
