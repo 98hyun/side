@@ -1,4 +1,3 @@
-// library
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:marquee/marquee.dart';
@@ -37,7 +36,9 @@ class MyApp extends StatelessWidget {
 class FirstPage extends StatelessWidget {
   final String text;
   final Shader shader;
-  FirstPage({Key? key, required this.shader, required this.text})
+  double speed = 100.0;
+  FirstPage(
+      {Key? key, required this.shader, required this.text, required this.speed})
       : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -60,6 +61,7 @@ class FirstPage extends StatelessWidget {
       body: Marquee(
         text: text,
         style: TextStyle(fontSize: 80, foreground: Paint()..shader = shader),
+        velocity: speed,
       ),
     );
   }
@@ -78,7 +80,21 @@ class _SecondPageState extends State<SecondPage> {
 
   List setsname = ["Set1", "Set2"];
   var setname = "Set1";
-  String usermind = '';
+  String usermind = "what's on your mind? ";
+  double _n = 100.0;
+
+  void add() {
+    setState(() {
+      _n += 1.0;
+    });
+  }
+
+  void minus() {
+    setState(() {
+      if (_n != 0) _n -= 1.0;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -96,14 +112,16 @@ class _SecondPageState extends State<SecondPage> {
                     color: Colors.black,
                     borderRadius: BorderRadius.all(Radius.circular(20))),
                 child: Center(
-                    child: Text(usermind,
-                        style: TextStyle(
-                            fontSize: 40,
-                            foreground: Paint()
-                              ..shader = LinearGradient(
-                                      colors: getColor(setname))
-                                  .createShader(
-                                      Rect.fromLTWH(0.0, 20.0, 150.0, 20.0))))),
+                    child: Marquee(
+                  text: usermind,
+                  style: TextStyle(
+                      fontSize: 40,
+                      foreground: Paint()
+                        ..shader = LinearGradient(colors: getColor(setname))
+                            .createShader(
+                                Rect.fromLTWH(0.0, 20.0, 150.0, 20.0))),
+                  velocity: _n,
+                )),
               ),
             ),
             Flexible(
@@ -140,6 +158,36 @@ class _SecondPageState extends State<SecondPage> {
               ),
             ),
             Flexible(
+                child: Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  FloatingActionButton(
+                    heroTag: null,
+                    onPressed: add,
+                    child: Icon(
+                      Icons.add,
+                      color: Colors.black,
+                    ),
+                    backgroundColor: Colors.white,
+                  ),
+                  Text(
+                    _n.toStringAsFixed(1),
+                    style: TextStyle(fontSize: 13),
+                  ),
+                  FloatingActionButton(
+                    heroTag: null,
+                    onPressed: minus,
+                    child: Icon(
+                      Icons.remove,
+                      color: Colors.black,
+                    ),
+                    backgroundColor: Colors.white,
+                  )
+                ],
+              ),
+            )),
+            Flexible(
               child: ElevatedButton(
                 child: Text('Apply'),
                 onPressed: () async {
@@ -153,10 +201,12 @@ class _SecondPageState extends State<SecondPage> {
                     context,
                     MaterialPageRoute(
                         builder: (context) => FirstPage(
-                            shader: LinearGradient(colors: getColor(setname))
-                                .createShader(
-                                    Rect.fromLTWH(0.0, 20.0, 150.0, 20.0)),
-                            text: usermind)),
+                              shader: LinearGradient(colors: getColor(setname))
+                                  .createShader(
+                                      Rect.fromLTWH(0.0, 20.0, 150.0, 20.0)),
+                              text: usermind,
+                              speed: _n,
+                            )),
                   );
                   //We wait for the second screen to pop from anywhere
                   SystemChrome.setPreferredOrientations([
